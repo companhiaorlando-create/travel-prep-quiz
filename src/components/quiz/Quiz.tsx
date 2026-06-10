@@ -437,8 +437,7 @@ function Result({
 }
 
 function Offer() {
-  // Replace this URL with your real checkout link when ready.
-  const CHECKOUT_URL = "#checkout";
+  const CHECKOUT_URL = "https://pay.hotmart.com/X106205275B?off=lbqxl0o7&bid=1781109260386";
 
   return (
     <section className="animate-quiz-in space-y-6">
