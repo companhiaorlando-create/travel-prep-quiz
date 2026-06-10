@@ -60,9 +60,16 @@ export function Quiz() {
     }
   }, [step, answers]);
 
-  // Scroll to top on step change
+  // Scroll to top + dispara PageView do Meta Pixel a cada etapa
   useEffect(() => {
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const fbq = (window as any).fbq;
+      if (typeof fbq === "function") {
+        fbq("track", "PageView");
+      }
+    }
   }, [step]);
 
   return (
