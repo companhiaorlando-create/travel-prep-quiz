@@ -195,7 +195,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         ✨ Menos ansiedade, mais magia
       </div>
       <h1 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
-        🎢 Como aproveitar os parques sem precisar de fura-filas usando a <span className="text-primary">lógica oculta</span> de movimentação dentro dos parques
+        🎢 Descubra se você está prestes a perder horas em filas que poderiam ser evitadas <span className="text-primary">mesmo sem fura-filas</span>
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
         Descubra como economizar tempo, ter mais conforto, tomar decisões mais inteligentes e aproveitar os parques com mais controle, exclusividade e sensação de vantagem sobre a maioria dos visitantes.
