@@ -420,11 +420,9 @@ const RESULT_BENEFITS = [
 
 function Result({
   profileId,
-  firstName,
   onNext,
 }: {
   profileId: ProfileId;
-  firstName: string;
   onNext: () => void;
 }) {
   const p = PROFILES[profileId];
@@ -432,7 +430,7 @@ function Result({
     <section className="animate-quiz-in">
       <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-          {firstName ? `${firstName}, seu perfil é` : "Seu perfil é"}
+          Seu perfil é
         </p>
         <div className="mt-3 flex items-center gap-4">
           <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-brand text-3xl shadow-card">
