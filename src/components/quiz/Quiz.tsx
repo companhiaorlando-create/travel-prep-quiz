@@ -4,6 +4,7 @@ import { OptionCard } from "./OptionCard";
 import { computeProfile, PROFILES, type QuizAnswers, type ProfileId } from "@/lib/quiz";
 import orlandoLogo from "@/assets/orlando-co-logo.png.asset.json";
 
+
 type Step =
   | "intro"
   | "q1"
@@ -13,28 +14,15 @@ type Step =
   | "capture"
   | "loading"
   | "result"
-  | "bridge"
   | "offer";
 
-const ORDER: Step[] = ["intro", "q1", "q2", "q3", "q4", "capture", "loading", "result", "bridge", "offer"];
-const QUESTION_STEPS = 5;
-
-// A/B test variants for final CTA
-const CTA_VARIANTS = ["QUERO EVITAR FILAS EM ORLANDO", "QUERO MEU PLANO DE ORLANDO"] as const;
+const ORDER: Step[] = ["intro", "q1", "q2", "q3", "q4", "capture", "loading", "result", "offer"];
+const QUESTION_STEPS = 5; // q1..q4 + capture
 
 export function Quiz() {
   const [step, setStep] = useState<Step>("intro");
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [profile, setProfile] = useState<ProfileId | null>(null);
-  const [ctaVariant] = useState<string>(() => {
-    if (typeof window === "undefined") return CTA_VARIANTS[0];
-    const key = "oc_cta_variant";
-    const saved = window.localStorage.getItem(key);
-    if (saved && CTA_VARIANTS.includes(saved as typeof CTA_VARIANTS[number])) return saved;
-    const picked = CTA_VARIANTS[Math.random() < 0.5 ? 0 : 1];
-    try { window.localStorage.setItem(key, picked); } catch {}
-    return picked;
-  });
 
   const stepIndex = ORDER.indexOf(step);
   const questionProgress = useMemo(() => {
@@ -67,11 +55,10 @@ export function Quiz() {
     }
   }, [step, answers]);
 
+  // Scroll to top on step change
   useEffect(() => {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
-
-  const hideProgress = step === "intro" || step === "loading" || step === "result" || step === "bridge" || step === "offer";
 
   return (
     <div className="min-h-screen bg-gradient-soft">
@@ -84,7 +71,7 @@ export function Quiz() {
           />
         </div>
 
-        {stepIndex > 0 && step !== "loading" && step !== "result" && step !== "bridge" && step !== "offer" && (
+        {stepIndex > 0 && step !== "loading" && step !== "result" && step !== "offer" && (
           <button
             onClick={back}
             className="text-xs font-medium text-muted-foreground hover:text-foreground"
@@ -95,7 +82,7 @@ export function Quiz() {
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-8 sm:py-12">
-        {!hideProgress && (
+        {step !== "intro" && step !== "loading" && step !== "result" && step !== "offer" && (
           <div className="mb-8 animate-quiz-in">
             <ProgressBar current={questionProgress} total={QUESTION_STEPS} />
           </div>
@@ -120,12 +107,11 @@ export function Quiz() {
 
         {step === "q2" && (
           <Question
-            title="Você acredita que conseguiria aproveitar os parques sem um roteiro bem definido?"
+            title="Você já sabe exatamente qual parque fará em cada dia?"
             options={[
-              { id: "tranquilo", icon: "😎", label: "Sim, tranquilo" },
-              { id: "talvez", icon: "🤔", label: "Talvez" },
-              { id: "dificil", icon: "😬", label: "Acho difícil" },
-              { id: "nao-ideia", icon: "🙈", label: "Não faço ideia" },
+              { id: "tudo", icon: "✅", label: "Sim, tudo planejado" },
+              { id: "ideia", icon: "💭", label: "Tenho uma ideia" },
+              { id: "nao", icon: "❓", label: "Ainda não sei" },
             ]}
             selected={answers.planejamento}
             onPick={(v) => pick("planejamento", v, "q3")}
@@ -148,12 +134,11 @@ export function Quiz() {
 
         {step === "q4" && (
           <Question
-            title="Se você chegasse hoje na Disney, saberia usar o Lightning Lane para evitar filas?"
-            subtitle="O Lightning Lane é uma das ferramentas mais importantes para economizar tempo nos parques."
+            title="Você já entende como funciona o Lightning Lane?"
+            subtitle="É o sistema da Disney para reduzir filas — calma, vamos te ajudar com isso."
             options={[
               { id: "sim", icon: "⚡", label: "Sim" },
               { id: "mais-ou-menos", icon: "🤔", label: "Mais ou menos" },
-              { id: "provavelmente-nao", icon: "😕", label: "Provavelmente não" },
               { id: "nao", icon: "🙈", label: "Não faço ideia" },
             ]}
             selected={answers.lightning}
@@ -178,13 +163,11 @@ export function Quiz() {
           <Result
             profileId={profile}
             firstName={answers.nome?.split(" ")[0] ?? ""}
-            onNext={() => setStep("bridge")}
+            onNext={() => setStep("offer")}
           />
         )}
 
-        {step === "bridge" && <Bridge onNext={() => setStep("offer")} />}
-
-        {step === "offer" && <Offer ctaLabel={ctaVariant} />}
+        {step === "offer" && <Offer />}
       </main>
 
       <footer className="px-5 pb-10 pt-4 text-center text-xs text-muted-foreground">
@@ -203,10 +186,10 @@ function Intro({ onStart }: { onStart: () => void }) {
         ✨ Menos ansiedade, mais magia
       </div>
       <h1 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
-        🎢 Descubra se sua viagem para <span className="text-primary">Orlando</span> está preparada para evitar filas, estresse e gastos desnecessários
+        🎢 Sua viagem para <span className="text-primary">Orlando</span> está realmente preparada?
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-        Em menos de 1 minuto, descubra os erros que fazem milhares de turistas perderem tempo, dinheiro e atrações importantes nos parques.
+        Descubra em menos de 1 minuto se você corre o risco de enfrentar filas gigantes, gastar mais do que deveria e perder atrações importantes.
       </p>
 
       <button
@@ -426,11 +409,9 @@ function Result({
             {p.name}
           </h2>
         </div>
-        <div className="mt-4 space-y-3 text-base text-muted-foreground sm:text-lg">
-          {p.description.split("\n\n").map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
+        <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+          {p.description}
+        </p>
 
         <div className="mt-7 rounded-2xl bg-secondary/60 p-5">
           <p className="text-sm font-bold text-foreground sm:text-base">
@@ -457,74 +438,8 @@ function Result({
   );
 }
 
-function Bridge({ onNext }: { onNext: () => void }) {
-  const alerts = [
-    "Não dominar o Lightning Lane",
-    "Não ter uma ordem otimizada das atrações",
-    "Perder tempo em deslocamentos e filas",
-  ];
-  return (
-    <section className="animate-quiz-in">
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
-        <h2 className="text-balance text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
-          Identificamos os principais pontos de atenção da sua viagem
-        </h2>
-        <p className="mt-3 text-base text-muted-foreground sm:text-lg">
-          Com base nas suas respostas, encontramos alguns fatores que podem impactar diretamente sua experiência em Orlando.
-        </p>
-
-        <ul className="mt-6 space-y-3">
-          {alerts.map((a) => (
-            <li
-              key={a}
-              className="flex items-start gap-3 rounded-2xl border-2 border-destructive/20 bg-destructive/5 p-4"
-            >
-              <span className="text-xl leading-none">⚠️</span>
-              <span className="text-sm font-medium text-foreground sm:text-base">{a}</span>
-            </li>
-          ))}
-        </ul>
-
-        <p className="mt-6 rounded-2xl bg-secondary/60 p-4 text-sm font-medium text-foreground sm:text-base">
-          A boa notícia é que todos esses problemas podem ser evitados com um planejamento simples.
-        </p>
-
-        <button
-          onClick={onNext}
-          className="mt-6 w-full rounded-2xl bg-gradient-cta px-6 py-4 text-base font-bold text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-lg"
-        >
-          Mostrar meu plano →
-        </button>
-      </div>
-    </section>
-  );
-}
-
-const TESTIMONIALS = [
-  {
-    name: "Ana Paula",
-    text: "Conseguimos fazer muito mais atrações por dia do que imaginávamos. Valeu cada centavo!",
-  },
-  {
-    name: "Rodrigo M.",
-    text: "Cheguei em Orlando sabendo exatamente o que fazer. Sem estresse e sem filas absurdas.",
-  },
-  {
-    name: "Juliana e Família",
-    text: "O checklist salvou nossa viagem. Nada foi esquecido e o roteiro funcionou perfeitamente.",
-  },
-];
-
-function Offer({ ctaLabel }: { ctaLabel: string }) {
+function Offer() {
   const CHECKOUT_URL = "https://pay.hotmart.com/X106205275B?off=lbqxl0o7&bid=1781109260386";
-
-  const conquests = [
-    "Fazer mais atrações no mesmo dia",
-    "Evitar filas que podem ultrapassar 2 horas",
-    "Entender o Lightning Lane sem complicação",
-    "Economizar dinheiro com decisões mais inteligentes",
-    "Viajar com muito menos estresse",
-  ];
 
   return (
     <section className="animate-quiz-in space-y-6">
@@ -536,23 +451,8 @@ function Offer({ ctaLabel }: { ctaLabel: string }) {
           Seu Plano <span className="text-primary">Orlando Sem Complicação</span> Está Pronto
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-          Com base nas suas respostas, identificamos que você pode economizar tempo, evitar filas e aproveitar muito mais atrações utilizando um roteiro inteligente.
+          Tudo o que você precisa para aproveitar Orlando de forma inteligente.
         </p>
-      </div>
-
-      {/* What you'll conquer */}
-      <div className="rounded-3xl border-2 border-primary/20 bg-card p-6 shadow-card sm:p-8">
-        <p className="text-base font-extrabold text-foreground sm:text-lg">
-          🎯 O que você vai conquistar:
-        </p>
-        <ul className="mt-4 space-y-3">
-          {conquests.map((c) => (
-            <li key={c} className="flex items-start gap-3 text-sm text-foreground sm:text-base">
-              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-success text-xs font-bold text-white">✓</span>
-              <span>{c}</span>
-            </li>
-          ))}
-        </ul>
       </div>
 
       {/* Product card */}
@@ -613,32 +513,6 @@ function Offer({ ctaLabel }: { ctaLabel: string }) {
         </div>
       </div>
 
-      {/* Social proof */}
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
-        <div className="flex items-start gap-3">
-          <span className="text-2xl leading-none">⭐</span>
-          <p className="text-sm font-bold text-foreground sm:text-base">
-            Mais de 1.000 viajantes já utilizaram estratégias semelhantes para planejar Orlando de forma mais inteligente.
-          </p>
-        </div>
-
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="rounded-2xl bg-secondary/60 p-4">
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-brand text-sm font-bold text-primary-foreground">
-                  {t.name.charAt(0)}
-                </div>
-                <p className="text-sm font-bold text-foreground">{t.name}</p>
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                "{t.text}"
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Price + CTA */}
       <div className="rounded-3xl border border-border bg-card p-6 text-center shadow-card sm:p-8">
         <p className="text-sm text-muted-foreground">
@@ -653,10 +527,9 @@ function Offer({ ctaLabel }: { ctaLabel: string }) {
 
         <a
           href={CHECKOUT_URL}
-          data-cta-variant={ctaLabel}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-cta px-6 py-5 text-base font-extrabold uppercase tracking-wide text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-lg"
         >
-          {ctaLabel} →
+          Quero viajar sem complicação →
         </a>
 
         <div className="mt-5 flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
