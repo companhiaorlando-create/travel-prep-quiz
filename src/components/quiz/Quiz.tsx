@@ -198,7 +198,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         🎢 Descubra se você está prestes a perder horas em filas que poderiam ser evitadas <span className="text-primary">mesmo sem fura-filas</span>
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-        Descubra como economizar tempo, ter mais conforto, tomar decisões mais inteligentes e aproveitar os parques com mais controle, exclusividade e sensação de vantagem sobre a maioria dos visitantes.
+        Descubra como economizar tempo, ter mais conforto e aproveitar os parques com mais controle, exclusividade e sensação de vantagem sobre a maioria dos visitantes.
       </p>
 
       <button
