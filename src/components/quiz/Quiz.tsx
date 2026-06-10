@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ProgressBar } from "./ProgressBar";
 import { OptionCard } from "./OptionCard";
 import { computeProfile, PROFILES, type QuizAnswers, type ProfileId } from "@/lib/quiz";
+import orlandoLogo from "@/assets/orlando-co-logo.png.asset.json";
+
 
 type Step =
   | "intro"
