@@ -195,7 +195,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         ✨ Menos ansiedade, mais magia
       </div>
       <h1 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
-        🎢 Como aproveitar os parques sem precisar de fura-filas usando a <span className="text-primary">lógica oculta</span> de movimentação dentro dos parques
+        🎢 Descubra se você está prestes a perder horas em filas que poderiam ser evitadas <span className="text-primary">mesmo sem fura-filas</span>
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
         Descubra como economizar tempo, ter mais conforto, tomar decisões mais inteligentes e aproveitar os parques com mais controle, exclusividade e sensação de vantagem sobre a maioria dos visitantes.
@@ -287,81 +287,6 @@ function Respiro({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-function Capture({
-  initialName,
-  initialEmail,
-  onSubmit,
-}: {
-  initialName?: string;
-  initialEmail?: string;
-  onSubmit: (nome: string, email: string) => void;
-}) {
-  const [nome, setNome] = useState(initialName ?? "");
-  const [email, setEmail] = useState(initialEmail ?? "");
-  const [err, setErr] = useState<string | null>(null);
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    const n = nome.trim();
-    const em = email.trim();
-    if (n.length < 2) return setErr("Digite seu nome completo.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return setErr("Digite um email válido.");
-    if (em.length > 254 || n.length > 80) return setErr("Texto muito longo.");
-    setErr(null);
-    onSubmit(n, em);
-  }
-
-  return (
-    <section className="animate-quiz-in">
-      <h2 className="text-balance text-2xl font-bold leading-tight text-foreground sm:text-3xl">
-        Estamos quase terminando...
-      </h2>
-      <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-        Para gerar seu resultado personalizado, informe seus dados.
-      </p>
-
-      <form onSubmit={submit} className="mt-6 space-y-4 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-6">
-        <div>
-          <label htmlFor="nome" className="mb-1.5 block text-sm font-semibold text-foreground">Nome</label>
-          <input
-            id="nome"
-            type="text"
-            value={nome}
-            maxLength={80}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Como podemos te chamar?"
-            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-ring/30 transition focus:border-primary focus:ring-4"
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-foreground">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            maxLength={254}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-ring/30 transition focus:border-primary focus:ring-4"
-          />
-        </div>
-
-        {err && <p className="text-sm font-medium text-destructive">{err}</p>}
-
-        <button
-          type="submit"
-          className="mt-2 w-full rounded-2xl bg-gradient-cta px-6 py-4 text-base font-bold text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-lg"
-        >
-          Ver meu resultado →
-        </button>
-
-        <p className="pt-1 text-center text-[11px] text-muted-foreground">
-          🔒 Seus dados estão seguros. Nada de spam — só conteúdo que ajuda sua viagem.
-        </p>
-      </form>
-    </section>
-  );
-}
 
 const LOADING_MESSAGES = [
   "Identificando oportunidades de economia...",
@@ -420,11 +345,9 @@ const RESULT_BENEFITS = [
 
 function Result({
   profileId,
-  firstName,
   onNext,
 }: {
   profileId: ProfileId;
-  firstName: string;
   onNext: () => void;
 }) {
   const p = PROFILES[profileId];
@@ -432,7 +355,7 @@ function Result({
     <section className="animate-quiz-in">
       <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-          {firstName ? `${firstName}, seu perfil é` : "Seu perfil é"}
+          Seu perfil é
         </p>
         <div className="mt-3 flex items-center gap-4">
           <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-brand text-3xl shadow-card">
