@@ -167,23 +167,11 @@ export function Quiz() {
           />
         )}
 
-        {step === "capture" && (
-          <Capture
-            initialName={answers.nome}
-            initialEmail={answers.email}
-            onSubmit={(nome, email) => {
-              setAnswers((a) => ({ ...a, nome, email }));
-              setStep("loading");
-            }}
-          />
-        )}
-
         {step === "loading" && <Loading />}
 
         {step === "result" && profile && (
           <Result
             profileId={profile}
-            firstName={answers.nome?.split(" ")[0] ?? ""}
             onNext={() => setStep("offer")}
           />
         )}
