@@ -13,13 +13,13 @@ type Step =
   | "q2"
   | "q3"
   | "q4"
-  | "capture"
   | "loading"
   | "result"
   | "offer";
 
-const ORDER: Step[] = ["intro", "q1", "q1b", "respiro", "q2", "q3", "q4", "capture", "loading", "result", "offer"];
-const QUESTION_STEPS = 7; // q1, q1b, respiro, q2, q3, q4, capture
+const ORDER: Step[] = ["intro", "q1", "q1b", "respiro", "q2", "q3", "q4", "loading", "result", "offer"];
+const QUESTION_STEPS = 6; // q1, q1b, respiro, q2, q3, q4
+
 
 export function Quiz() {
   const [step, setStep] = useState<Step>("intro");
@@ -36,8 +36,7 @@ export function Quiz() {
       case "q2": return 4;
       case "q3": return 5;
       case "q4": return 6;
-      case "capture": return 7;
-      default: return 7;
+      default: return 6;
     }
   }, [step]);
 
@@ -164,18 +163,7 @@ export function Quiz() {
               { id: "nao", icon: "🙈", label: "Não faço ideia" },
             ]}
             selected={answers.lightning}
-            onPick={(v) => pick("lightning", v, "capture")}
-          />
-        )}
-
-        {step === "capture" && (
-          <Capture
-            initialName={answers.nome}
-            initialEmail={answers.email}
-            onSubmit={(nome, email) => {
-              setAnswers((a) => ({ ...a, nome, email }));
-              setStep("loading");
-            }}
+            onPick={(v) => pick("lightning", v, "loading")}
           />
         )}
 
@@ -184,7 +172,6 @@ export function Quiz() {
         {step === "result" && profile && (
           <Result
             profileId={profile}
-            firstName={answers.nome?.split(" ")[0] ?? ""}
             onNext={() => setStep("offer")}
           />
         )}
