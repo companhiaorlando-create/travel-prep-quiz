@@ -13,13 +13,13 @@ type Step =
   | "q2"
   | "q3"
   | "q4"
-  | "capture"
   | "loading"
   | "result"
   | "offer";
 
-const ORDER: Step[] = ["intro", "q1", "q1b", "respiro", "q2", "q3", "q4", "capture", "loading", "result", "offer"];
-const QUESTION_STEPS = 7; // q1, q1b, respiro, q2, q3, q4, capture
+const ORDER: Step[] = ["intro", "q1", "q1b", "respiro", "q2", "q3", "q4", "loading", "result", "offer"];
+const QUESTION_STEPS = 6; // q1, q1b, respiro, q2, q3, q4
+
 
 export function Quiz() {
   const [step, setStep] = useState<Step>("intro");
