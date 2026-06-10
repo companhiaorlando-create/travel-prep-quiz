@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ProgressBar } from "./ProgressBar";
 import { OptionCard } from "./OptionCard";
 import { computeProfile, PROFILES, type QuizAnswers, type ProfileId } from "@/lib/quiz";
@@ -8,6 +8,8 @@ import orlandoLogo from "@/assets/orlando-co-logo.png.asset.json";
 type Step =
   | "intro"
   | "q1"
+  | "q1b"
+  | "respiro"
   | "q2"
   | "q3"
   | "q4"
@@ -16,8 +18,8 @@ type Step =
   | "result"
   | "offer";
 
-const ORDER: Step[] = ["intro", "q1", "q2", "q3", "q4", "capture", "loading", "result", "offer"];
-const QUESTION_STEPS = 5; // q1..q4 + capture
+const ORDER: Step[] = ["intro", "q1", "q1b", "respiro", "q2", "q3", "q4", "capture", "loading", "result", "offer"];
+const QUESTION_STEPS = 7; // q1, q1b, respiro, q2, q3, q4, capture
 
 export function Quiz() {
   const [step, setStep] = useState<Step>("intro");
@@ -26,13 +28,17 @@ export function Quiz() {
 
   const stepIndex = ORDER.indexOf(step);
   const questionProgress = useMemo(() => {
-    if (step === "intro") return 0;
-    if (step === "q1") return 1;
-    if (step === "q2") return 2;
-    if (step === "q3") return 3;
-    if (step === "q4") return 4;
-    if (step === "capture") return 5;
-    return 5;
+    switch (step) {
+      case "intro": return 0;
+      case "q1": return 1;
+      case "q1b": return 2;
+      case "respiro": return 3;
+      case "q2": return 4;
+      case "q3": return 5;
+      case "q4": return 6;
+      case "capture": return 7;
+      default: return 7;
+    }
   }, [step]);
 
   function pick(key: keyof QuizAnswers, value: string, next: Step) {
@@ -101,9 +107,25 @@ export function Quiz() {
               { id: "aproveitar", icon: "🎯", label: "Não aproveitar tudo que planejei" },
             ]}
             selected={answers.preocupacao}
-            onPick={(v) => pick("preocupacao", v, "q2")}
+            onPick={(v) => pick("preocupacao", v, "q1b")}
           />
         )}
+
+        {step === "q1b" && (
+          <Question
+            title="Imagine ficar 2 horas em uma fila para uma única atração. Como você se sentiria?"
+            options={[
+              { id: "muito-frustrado", icon: "😤", label: "Muito frustrado" },
+              { id: "chateado", icon: "😕", label: "Chateado" },
+              { id: "faz-parte", icon: "🤷", label: "Faz parte da viagem" },
+              { id: "nunca-pensei", icon: "💭", label: "Nunca tinha pensado nisso" },
+            ]}
+            selected={answers.sentimento}
+            onPick={(v) => pick("sentimento", v, "respiro")}
+          />
+        )}
+
+        {step === "respiro" && <Respiro onContinue={() => setStep("q2")} />}
 
         {step === "q2" && (
           <Question
@@ -186,10 +208,10 @@ function Intro({ onStart }: { onStart: () => void }) {
         ✨ Menos ansiedade, mais magia
       </div>
       <h1 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
-        🎢 Sua viagem para <span className="text-primary">Orlando</span> está realmente preparada?
+        🎢 Como aproveitar os parques sem precisar de fura-filas usando a <span className="text-primary">lógica oculta</span> de movimentação dentro dos parques
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-        Descubra em menos de 1 minuto se você corre o risco de enfrentar filas gigantes, gastar mais do que deveria e perder atrações importantes.
+        Descubra como economizar tempo, ter mais conforto, tomar decisões mais inteligentes e aproveitar os parques com mais controle, exclusividade e sensação de vantagem sobre a maioria dos visitantes.
       </p>
 
       <button
@@ -249,6 +271,30 @@ function Question({
             onClick={() => onPick(o.id)}
           />
         ))}
+      </div>
+    </section>
+  );
+}
+
+function Respiro({ onContinue }: { onContinue: () => void }) {
+  return (
+    <section className="animate-quiz-in">
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <div className="mx-auto mb-5 grid h-16 w-16 animate-float-slow place-items-center rounded-full bg-gradient-brand text-3xl shadow-soft">
+          ✨
+        </div>
+        <h2 className="text-balance text-center text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+          Estamos entendendo melhor seu perfil para te ajudar
+        </h2>
+        <p className="mt-4 text-pretty text-center text-base text-muted-foreground sm:text-lg">
+          Estamos analisando suas respostas para entender como você costuma planejar uma viagem e identificar oportunidades para que você aproveite mais os parques com menos filas, menos desgaste e mais tranquilidade.
+        </p>
+        <button
+          onClick={onContinue}
+          className="mt-7 w-full rounded-2xl bg-gradient-cta px-6 py-4 text-base font-bold text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-lg"
+        >
+          Continuar →
+        </button>
       </div>
     </section>
   );
@@ -438,8 +484,51 @@ function Result({
   );
 }
 
+const FAQ_ITEMS: { q: string; a: string }[] = [
+  {
+    q: "Não consigo encontrar essas informações gratuitamente na internet?",
+    a: "Até consegue encontrar partes dessas informações em vídeos, blogs e redes sociais. O problema é que normalmente o conteúdo está espalhado, desatualizado ou até mesmo contraditório. O ebook reúne tudo em um único lugar, organizado de forma simples e prática para você não perder horas pesquisando.",
+  },
+  {
+    q: "Esse conteúdo serve para quem vai para Orlando pela primeira vez?",
+    a: "Sim. O material foi pensado principalmente para quem quer viajar com mais segurança, organização e tranquilidade, mesmo sem experiência anterior.",
+  },
+  {
+    q: "O ebook fala apenas sobre filas?",
+    a: "Não. Além das estratégias para reduzir filas, você também encontrará orientações sobre organização, planejamento, deslocamento, economia e aproveitamento inteligente dos parques.",
+  },
+  {
+    q: "Vou receber o material imediatamente?",
+    a: "Sim. Após a confirmação do pagamento, o acesso é enviado imediatamente para o email informado na compra.",
+  },
+  {
+    q: "E se eu não gostar do conteúdo?",
+    a: "Você tem garantia de 7 dias. Se dentro desse período entender que o material não é para você, poderá solicitar o reembolso conforme as condições da oferta.",
+  },
+  {
+    q: "Preciso comprar algum fura-fila para aplicar as estratégias?",
+    a: "Não necessariamente. O objetivo do material é justamente mostrar formas mais inteligentes de aproveitar os parques e entender melhor a movimentação das pessoas, ajudando você a tomar decisões melhores durante a viagem.",
+  },
+];
+
+const FINAL_BENEFITS = [
+  "Aproveitar mais atrações",
+  "Reduzir tempo em filas",
+  "Caminhar menos dentro dos parques",
+  "Economizar dinheiro",
+  "Tomar decisões com mais confiança",
+  "Evitar erros comuns de turistas",
+  "Aproveitar a viagem com mais tranquilidade",
+];
+
 function Offer() {
   const CHECKOUT_URL = "https://pay.hotmart.com/X106205275B?off=lbqxl0o7&bid=1781109260386";
+  const detailsRef = useRef<HTMLDivElement | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  function scrollToDetails() {
+    detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <section className="animate-quiz-in space-y-6">
@@ -453,6 +542,13 @@ function Offer() {
         <p className="mx-auto mt-3 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
           Tudo o que você precisa para aproveitar Orlando de forma inteligente.
         </p>
+
+        <button
+          onClick={scrollToDetails}
+          className="mt-5 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-cta px-6 py-3 text-sm font-bold text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-base"
+        >
+          Quero ver todos os detalhes ↓
+        </button>
       </div>
 
       {/* Product card */}
@@ -514,7 +610,7 @@ function Offer() {
       </div>
 
       {/* Price + CTA */}
-      <div className="rounded-3xl border border-border bg-card p-6 text-center shadow-card sm:p-8">
+      <div ref={detailsRef} className="rounded-3xl border border-border bg-card p-6 text-center shadow-card sm:p-8">
         <p className="text-sm text-muted-foreground">
           De <span className="line-through">R$ 97,00</span> por apenas
         </p>
@@ -535,6 +631,66 @@ function Offer() {
         <div className="mt-5 flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
           <span className="grid h-8 w-8 place-items-center rounded-full bg-secondary text-base">🛡️</span>
           Garantia incondicional de 7 dias. Se não amar, devolvemos seu dinheiro.
+        </div>
+      </div>
+
+      {/* Nova seção: viagem melhor */}
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <h3 className="text-balance text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
+          Sua viagem pode ser muito melhor do que você imagina
+        </h3>
+        <div className="mt-4 space-y-3 text-pretty text-sm text-muted-foreground sm:text-base">
+          <p>A maioria das pessoas acredita que Orlando é sinônimo de filas enormes, cansaço e correria.</p>
+          <p>Mas a verdade é que quem entende a lógica correta dos parques consegue aproveitar mais atrações, caminhar menos, reduzir tempo perdido e tomar decisões muito mais inteligentes durante a viagem.</p>
+          <p>Você não precisa gastar centenas de dólares com soluções extras para ter uma experiência incrível.</p>
+          <p>Com a estratégia certa, é possível ter mais conforto, mais controle, mais economia e muito mais tranquilidade para aproveitar os parques com sua família.</p>
+        </div>
+
+        <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+          {FINAL_BENEFITS.map((b) => (
+            <li key={b} className="flex items-start gap-2 text-sm text-foreground sm:text-base">
+              <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-success text-[10px] font-bold text-white">✓</span>
+              {b}
+            </li>
+          ))}
+        </ul>
+
+        <a
+          href={CHECKOUT_URL}
+          className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-cta px-6 py-5 text-base font-extrabold uppercase tracking-wide text-cta-foreground shadow-cta transition-all hover:-translate-y-0.5 sm:text-lg"
+        >
+          Quero aproveitar Orlando de forma inteligente →
+        </a>
+      </div>
+
+      {/* FAQ */}
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <h3 className="text-center text-2xl font-extrabold text-foreground sm:text-3xl">
+          Perguntas Frequentes
+        </h3>
+        <div className="mt-6 divide-y divide-border">
+          {FAQ_ITEMS.map((item, i) => {
+            const isOpen = openFaq === i;
+            return (
+              <div key={i} className="py-3">
+                <button
+                  onClick={() => setOpenFaq(isOpen ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 py-2 text-left text-sm font-semibold text-foreground sm:text-base"
+                  aria-expanded={isOpen}
+                >
+                  <span>{item.q}</span>
+                  <span className={`shrink-0 text-primary transition-transform ${isOpen ? "rotate-45" : ""}`}>
+                    +
+                  </span>
+                </button>
+                {isOpen && (
+                  <p className="mt-2 text-pretty text-sm text-muted-foreground sm:text-base">
+                    {item.a}
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
