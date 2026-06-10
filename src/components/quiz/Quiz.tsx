@@ -163,7 +163,7 @@ export function Quiz() {
               { id: "nao", icon: "🙈", label: "Não faço ideia" },
             ]}
             selected={answers.lightning}
-            onPick={(v) => pick("lightning", v, "capture")}
+            onPick={(v) => pick("lightning", v, "loading")}
           />
         )}
 
