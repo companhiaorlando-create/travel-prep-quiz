@@ -33,6 +33,7 @@ export const PROFILES: Record<ProfileId, Profile> = {
 
 export interface QuizAnswers {
   preocupacao?: string;
+  sentimento?: string;
   planejamento?: string;
   problema?: string;
   lightning?: string;
