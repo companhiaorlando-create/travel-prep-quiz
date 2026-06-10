@@ -36,8 +36,7 @@ export function Quiz() {
       case "q2": return 4;
       case "q3": return 5;
       case "q4": return 6;
-      case "capture": return 7;
-      default: return 7;
+      default: return 6;
     }
   }, [step]);
 
