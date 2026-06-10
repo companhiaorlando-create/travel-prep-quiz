@@ -1,29 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Quiz } from "@/components/quiz/Quiz";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Quiz Orlando Sem Complicação | Orlando Company" },
+      {
+        name: "description",
+        content:
+          "Descubra em menos de 1 minuto se sua viagem para Orlando está realmente preparada. Fuja das filas, economize e aproveite cada dia.",
+      },
+      { property: "og:title", content: "Quiz Orlando Sem Complicação | Orlando Company" },
+      {
+        property: "og:description",
+        content:
+          "Descubra em menos de 1 minuto se sua viagem para Orlando está realmente preparada.",
+      },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  return <Quiz />;
 }
