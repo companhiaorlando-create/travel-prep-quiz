@@ -13,21 +13,21 @@ export const PROFILES: Record<ProfileId, Profile> = {
     name: "Explorador Ansioso",
     emoji: "🧭",
     description:
-      "Você está animado para a viagem, mas ainda existem alguns pontos importantes que podem gerar filas, estresse e gastos desnecessários.",
+      "Você está animado para a viagem, mas ainda existem alguns pontos que podem gerar estresse, gastos desnecessários e perda de tempo nos parques.\n\nCom um direcionamento simples, sua experiência pode ser muito mais tranquila e organizada.",
   },
   planejador: {
     id: "planejador",
     name: "Planejador Inteligente",
     emoji: "🗺️",
     description:
-      "Você já está no caminho certo e com alguns ajustes pode aproveitar muito mais os parques.",
+      "Você já está à frente da maioria dos viajantes e demonstra preocupação com o planejamento da viagem.\n\nCom alguns ajustes estratégicos, pode aproveitar ainda mais os parques e evitar erros comuns que muitos turistas cometem.",
   },
   cacador: {
     id: "cacador",
     name: "Caçador de Filas",
     emoji: "⚡",
     description:
-      "Seu foco é aproveitar o máximo possível dos parques sem desperdiçar horas em filas desnecessárias.",
+      "Você já percebeu que o maior risco da sua viagem não é o valor dos ingressos.\n\nÉ gastar milhares de reais para passar horas em filas enquanto outras famílias conseguem aproveitar muito mais atrações no mesmo dia.\n\nA boa notícia é que isso pode ser evitado com planejamento e estratégias simples.",
   },
 };
 
@@ -50,9 +50,11 @@ export function computeProfile(a: QuizAnswers): ProfileId {
   if (a.preocupacao === "organizar") exploradorScore += 2;
   if (a.preocupacao === "aproveitar") planejadorScore += 1;
 
-  if (a.planejamento === "tudo") planejadorScore += 3;
-  if (a.planejamento === "ideia") planejadorScore += 1;
-  if (a.planejamento === "nao") exploradorScore += 2;
+  // Pergunta 2 (nova): "Conseguiria aproveitar sem roteiro?"
+  if (a.planejamento === "tranquilo") cacadorScore += 1;
+  if (a.planejamento === "talvez") planejadorScore += 1;
+  if (a.planejamento === "dificil") planejadorScore += 2;
+  if (a.planejamento === "nao-ideia") exploradorScore += 3;
 
   if (a.problema === "filas") cacadorScore += 3;
   if (a.problema === "economizar") exploradorScore += 1;
@@ -61,6 +63,7 @@ export function computeProfile(a: QuizAnswers): ProfileId {
 
   if (a.lightning === "sim") planejadorScore += 2;
   if (a.lightning === "mais-ou-menos") cacadorScore += 1;
+  if (a.lightning === "provavelmente-nao") exploradorScore += 1;
   if (a.lightning === "nao") exploradorScore += 2;
 
   const scores: Array<[ProfileId, number]> = [
