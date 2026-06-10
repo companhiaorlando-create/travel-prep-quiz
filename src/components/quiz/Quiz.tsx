@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ProgressBar } from "./ProgressBar";
 import { OptionCard } from "./OptionCard";
 import { computeProfile, PROFILES, type QuizAnswers, type ProfileId } from "@/lib/quiz";
+import orlandoLogo from "@/assets/orlando-co-logo.png.asset.json";
+
 
 type Step =
   | "intro"
@@ -62,13 +64,13 @@ export function Quiz() {
     <div className="min-h-screen bg-gradient-soft">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 pt-6">
         <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-brand text-sm font-bold text-primary-foreground shadow-card">
-            OC
-          </div>
-          <span className="text-sm font-bold tracking-tight text-foreground sm:text-base">
-            Orlando Company
-          </span>
+          <img
+            src={orlandoLogo.url}
+            alt="Orlando Co. logo"
+            className="h-10 w-auto sm:h-12"
+          />
         </div>
+
         {stepIndex > 0 && step !== "loading" && step !== "result" && step !== "offer" && (
           <button
             onClick={back}
