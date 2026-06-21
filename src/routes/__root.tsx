@@ -117,6 +117,14 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <noscript>
+          <iframe
+            src="https://gtm.orlandoco.com.br/ns.html?id=GTM-KG9NQPJ7"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         {children}
         <Scripts />
       </body>
