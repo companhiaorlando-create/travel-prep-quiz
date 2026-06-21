@@ -1,26 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Quiz } from "@/components/quiz/Quiz";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quiz Orlando Sem Complicação | Orlando Company" },
-      {
-        name: "description",
-        content:
-          "Descubra em menos de 1 minuto se sua viagem para Orlando está realmente preparada. Fuja das filas, economize e aproveite cada dia.",
-      },
-      { property: "og:title", content: "Quiz Orlando Sem Complicação | Orlando Company" },
-      {
-        property: "og:description",
-        content:
-          "Descubra em menos de 1 minuto se sua viagem para Orlando está realmente preparada.",
-      },
+      { title: "Em breve | Orlando Company" },
+      { name: "description", content: "Em breve." },
     ],
   }),
-  component: Index,
+  component: ComingSoon,
 });
 
-function Index() {
-  return <Quiz />;
+function ComingSoon() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6">
+      <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground text-center">
+        Em breve
+      </h1>
+    </main>
+  );
 }
