@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ProgressBar } from "./ProgressBar";
 import { OptionCard } from "./OptionCard";
 import { computeProfile, PROFILES, type QuizAnswers, type ProfileId } from "@/lib/quiz";
-import orlandoLogo from "@/assets/orlando-co-logo.png.asset.json";
+
+
 
 
 type Step =
@@ -77,7 +78,7 @@ export function Quiz() {
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 pt-6">
         <div className="flex items-center gap-2">
           <img
-            src={orlandoLogo.url}
+            src="https://storage.googleapis.com/gpt-engineer-file-uploads/se2YrZjrvzY2ldUoqwTUoBe2VMm2/social-images/social-1781109447368-Orlando_Co._-_Logo_-_3.webp"
             alt="Orlando Co. logo"
             className="h-10 w-auto sm:h-12"
           />
