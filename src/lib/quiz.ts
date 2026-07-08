@@ -1,74 +1,91 @@
-export type ProfileId = "explorador" | "planejador" | "cacador";
+export type RiskLevel = "alto" | "moderado" | "baixo";
 
-export interface Profile {
-  id: ProfileId;
-  name: string;
-  emoji: string;
-  description: string;
+export interface RiskResult {
+  id: RiskLevel;
+  title: string;
+  subtitle: string;
+  paragraphs: string[];
+  bullets: string[];
 }
 
-export const PROFILES: Record<ProfileId, Profile> = {
-  explorador: {
-    id: "explorador",
-    name: "Explorador Ansioso",
-    emoji: "🧭",
-    description:
-      "Você está animado para a viagem, mas ainda existem alguns pontos importantes que podem gerar filas, estresse e gastos desnecessários.",
+export const RISK_RESULTS: Record<RiskLevel, RiskResult> = {
+  alto: {
+    id: "alto",
+    title: "🚨 Sua viagem está em zona de risco",
+    subtitle:
+      "Pelas suas respostas, você tem grandes chances de perder entre 12 e 18 horas da viagem em filas que poderiam ser evitadas.",
+    paragraphs: [
+      "Isso representa aproximadamente:",
+      "A boa notícia é que esse cenário não acontece por falta de dinheiro, e sim por falta de estratégia. Com o planejamento certo, boa parte desse tempo pode ser recuperada.",
+    ],
+    bullets: [
+      "até 10 atrações grandes",
+      "quase 2 dias de parque",
+      "ou centenas de dólares caso tente compensar comprando fura-filas.",
+    ],
   },
-  planejador: {
-    id: "planejador",
-    name: "Planejador Inteligente",
-    emoji: "🗺️",
-    description:
-      "Você já está no caminho certo e com alguns ajustes pode aproveitar muito mais os parques.",
+  moderado: {
+    id: "moderado",
+    title: "⚠️ Sua viagem precisa de alguns ajustes",
+    subtitle:
+      "Pelas suas respostas, você provavelmente perderia entre 8 e 14 horas em filas que poderiam ser evitadas.",
+    paragraphs: [
+      "Isso equivale aproximadamente a:",
+      "Você já tem uma boa base de planejamento, mas ainda existem decisões que podem fazer bastante diferença no seu aproveitamento.",
+    ],
+    bullets: [
+      "até 7 atrações grandes",
+      "quase 1 dia inteiro de parque",
+      "além do risco de gastar mais dinheiro tentando resolver problemas durante a viagem.",
+    ],
   },
-  cacador: {
-    id: "cacador",
-    name: "Caçador de Filas",
-    emoji: "⚡",
-    description:
-      "Seu foco é aproveitar o máximo possível dos parques sem desperdiçar horas em filas desnecessárias.",
+  baixo: {
+    id: "baixo",
+    title: "✅ Você está no caminho certo",
+    subtitle:
+      "Pelas suas respostas, sua viagem já demonstra um bom nível de preparação. Mesmo assim, ainda existe o risco de perder entre 3 e 7 horas em filas evitáveis.",
+    paragraphs: [
+      "Na prática isso representa:",
+      "Pequenos ajustes costumam gerar um ganho enorme no aproveitamento da viagem.",
+    ],
+    bullets: [
+      "até 4 atrações importantes",
+      "boa parte de uma manhã ou tarde de parque",
+      "tempo que poderia ser usado em shows, restaurantes ou experiências extras.",
+    ],
   },
 };
 
 export interface QuizAnswers {
   preocupacao?: string;
-  sentimento?: string;
   planejamento?: string;
-  problema?: string;
-  lightning?: string;
+  apps?: string;
+  comer?: string;
+  ordem?: string;
   nome?: string;
   email?: string;
 }
 
-export function computeProfile(a: QuizAnswers): ProfileId {
-  let cacadorScore = 0;
-  let planejadorScore = 0;
-  let exploradorScore = 0;
+function scoreAnswer(v: string | undefined): number {
+  if (v === "sim" || v === "tudo") return 2;
+  if (v === "meio" || v === "ideia") return 1;
+  if (v === "nao") return 0;
+  return 0;
+}
 
-  if (a.preocupacao === "filas") cacadorScore += 2;
-  if (a.preocupacao === "dinheiro") exploradorScore += 1;
-  if (a.preocupacao === "organizar") exploradorScore += 2;
-  if (a.preocupacao === "aproveitar") planejadorScore += 1;
+export function computeRisk(a: QuizAnswers): RiskLevel {
+  // Preocupação: quanto mais focada em aproveitar melhor, mais preparado.
+  let prep = 0;
+  if (a.preocupacao === "aproveitar") prep += 2;
+  else if (a.preocupacao === "organizar" || a.preocupacao === "filas") prep += 1;
 
-  if (a.planejamento === "tudo") planejadorScore += 3;
-  if (a.planejamento === "ideia") planejadorScore += 1;
-  if (a.planejamento === "nao") exploradorScore += 2;
+  prep += scoreAnswer(a.planejamento);
+  prep += scoreAnswer(a.apps);
+  prep += scoreAnswer(a.comer);
+  prep += scoreAnswer(a.ordem);
 
-  if (a.problema === "filas") cacadorScore += 3;
-  if (a.problema === "economizar") exploradorScore += 1;
-  if (a.problema === "roteiro") planejadorScore += 2;
-  if (a.problema === "estresse") exploradorScore += 2;
-
-  if (a.lightning === "sim") planejadorScore += 2;
-  if (a.lightning === "mais-ou-menos") cacadorScore += 1;
-  if (a.lightning === "nao") exploradorScore += 2;
-
-  const scores: Array<[ProfileId, number]> = [
-    ["cacador", cacadorScore],
-    ["planejador", planejadorScore],
-    ["explorador", exploradorScore],
-  ];
-  scores.sort((a, b) => b[1] - a[1]);
-  return scores[0][0];
+  // Máximo = 10
+  if (prep >= 7) return "baixo";
+  if (prep >= 4) return "moderado";
+  return "alto";
 }
