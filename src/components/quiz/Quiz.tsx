@@ -401,7 +401,7 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
     a: "Sim. O material foi pensado principalmente para quem quer viajar com mais segurança, organização e tranquilidade, mesmo sem experiência anterior.",
   },
   {
-    q: "O ebook fala apenas sobre filas?",
+    q: "O Manual fala apenas sobre filas?",
     a: "Não. Além das estratégias para reduzir filas, você também encontrará orientações sobre organização, planejamento, deslocamento, economia e aproveitamento inteligente dos parques.",
   },
   {
